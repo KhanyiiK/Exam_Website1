@@ -45,15 +45,13 @@ function renderAsteroidOrbits(asteroids) {
         .domain([0, d3.max(asteroids, d => d.close_approach_data[0].miss_distance.kilometers)])
         .range([10, width / 2]);
 
-    const starPoints = 5; // Change this value to adjust the number of star points
-    const starRadius = 8; // Change this value to adjust the size of the star points
-
-    const asteroidStars = orbits.selectAll("polygon")
+    const asteroidOrbits = orbits.selectAll("circle")
         .data(asteroids)
         .enter()
-        .append("polygon")
-        .attr("points", d => generateStarPoints(d, starPoints, starRadius))
-        .attr("transform", `translate(${width / 2},${height / 2})`)
+        .append("circle")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("r", d => scale(d.close_approach_data[0].miss_distance.kilometers))
         .attr("fill", "none")
         .attr("stroke", createGradient)
         .attr("stroke-opacity", 0.6)
@@ -76,20 +74,6 @@ function renderAsteroidOrbits(asteroids) {
                 .duration(500)
                 .style("opacity", 0);
         });
-
-    function generateStarPoints(d, numPoints, radius) {
-        const angleIncrement = (2 * Math.PI) / numPoints;
-        let points = "";
-
-        for (let i = 0; i < numPoints; i++) {
-            const angle = i * angleIncrement;
-            const x = radius * Math.cos(angle);
-            const y = radius * Math.sin(angle);
-            points += `${x},${y} `;
-        }
-
-        return points.trim();
-    }
 
     // Create a radial gradient with a spectrum of colors
     function createGradient(d, i) {
